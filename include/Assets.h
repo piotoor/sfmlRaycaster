@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <iostream>
+#include <string>
 #include <memory>
 
 class Assets
@@ -11,11 +12,11 @@ class Assets
     public:
         Assets();
         virtual ~Assets();
-        static sf::Image* getTexture(int textureIndex);
+        static sf::Image* getTexture(std::string name);
         static void loadTextures(const std::string assetsFolder);
 
     protected:
-        static std::map<int, std::unique_ptr<sf::Image>> textures;
+        static std::map<std::string, std::unique_ptr<sf::Image>> textures;
 
 };
 

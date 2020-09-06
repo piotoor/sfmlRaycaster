@@ -1,6 +1,6 @@
 #include "Assets.h"
 
-std::map<int, std::unique_ptr<sf::Image>> Assets::textures;
+std::map<std::string, std::unique_ptr<sf::Image>> Assets::textures;
 
 Assets::Assets() {
 
@@ -10,9 +10,9 @@ Assets::~Assets() {
 
 }
 
-sf::Image* Assets::getTexture(int textureIndex)
+sf::Image* Assets::getTexture(std::string name)
 {
-    return textures[textureIndex].get();
+    return textures[name].get();
 }
 
 void Assets::loadTextures(std::string assetsFolder)
@@ -20,57 +20,57 @@ void Assets::loadTextures(std::string assetsFolder)
     assetsFolder.append("/");
     std::cout << "Loading textures..." << std::endl;
     bool successfull = true;
-    textures[0] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "bluestone.png"))
+    textures["bluestone"] = std::make_unique<sf::Image>();
+    if (!textures["bluestone"]->loadFromFile(assetsFolder + "bluestone.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[1] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "colorstone.png"))
+    textures["colorstone"] = std::make_unique<sf::Image>();
+    if (!textures["colorstone"]->loadFromFile(assetsFolder + "colorstone.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[2] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "eagle.png"))
+    textures["eagle"] = std::make_unique<sf::Image>();
+    if (!textures["eagle"]->loadFromFile(assetsFolder + "eagle.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[3] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "greystone.png"))
+    textures["greystone"] = std::make_unique<sf::Image>();
+    if (!textures["greystone"]->loadFromFile(assetsFolder + "greystone.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[4] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "mossy.png"))
+    textures["mossy"] = std::make_unique<sf::Image>();
+    if (!textures["mossy"]->loadFromFile(assetsFolder + "mossy.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[5] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "purplestone.png"))
+    textures["purplestone"] = std::make_unique<sf::Image>();
+    if (!textures["purplestone"]->loadFromFile(assetsFolder + "purplestone.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[6] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "redbrick.png"))
+    textures["redbrick"] = std::make_unique<sf::Image>();
+    if (!textures["redbrick"]->loadFromFile(assetsFolder + "redbrick.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;
     }
 
-    textures[7] = std::make_unique<sf::Image>();
-    if (!textures[0]->loadFromFile(assetsFolder + "wood.png"))
+    textures["wood"] = std::make_unique<sf::Image>();
+    if (!textures["wood"]->loadFromFile(assetsFolder + "wood.png"))
     {
         std::cout << "Error loading texture" << std::endl;
         successfull = false;

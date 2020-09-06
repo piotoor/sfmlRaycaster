@@ -22,8 +22,8 @@ Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameM
             }
         }
 
-        // load textures or generate
-        // scale textures
+
+
     }
 }
 
