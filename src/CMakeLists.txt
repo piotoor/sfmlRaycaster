@@ -17,7 +17,8 @@ include_directories(../include)
 add_executable(sfmlRaycaster main.cpp
                              raycaster.cpp
                              player.cpp
-                             gameMap.cpp)
+                             gameMap.cpp
+                             Assets.cpp)
 find_library(SFML_GRAPHICS_LIB sfml-graphics)
 find_library(SFML_WINDOW_LIB sfml-window)
 find_library(SFML_SYSTEM_LIB sfml-system)

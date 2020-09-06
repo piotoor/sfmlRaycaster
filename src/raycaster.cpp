@@ -2,16 +2,18 @@
 #include <cmath>
 #include <iostream>
 
-Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameMap *gameMapPtr,  Raycaster::RaycasterType raycasterType):
+Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameMap *gameMapPtr,  Raycaster::RaycasterType raycasterType, int textureWidth, int textureHeight):
     screenWidth(screenWidth),
     screenHeight(screenHeight),
     playerPtr(playerPtr),
     gameMapPtr(gameMapPtr),
     raycasterType(raycasterType),
+    textureWidth(textureWidth),
+    textureHeight(textureHeight),
     mVertices(sf::Points, screenWidth * screenHeight),
     mLines(sf::Lines, screenWidth * 2) {
 
-    if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TESTURES) {
+    if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
         for (int j = 0; j < screenWidth; ++j) {
             for (int i = 0; i < screenHeight; ++i) {
                 mVertices[j * screenHeight + i].position.x = j;
@@ -19,6 +21,9 @@ Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameM
                 mVertices[j * screenHeight + i].color = sf::Color::Black;
             }
         }
+
+        // load textures or generate
+        // scale textures
     }
 }
 
@@ -31,7 +36,7 @@ Raycaster::~Raycaster() {
     states.transform *= getTransform();
     states.texture = NULL;
 
-    if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TESTURES) {
+    if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
         target.draw(mVertices, states);
     } else {
         target.draw(mLines, states);
@@ -100,47 +105,58 @@ void Raycaster::update() {
         int lineStart = std::max(0, screenHeight / 2 - lineHeight / 2);
         int lineEnd = std::min(screenHeight / 2 + lineHeight / 2, screenHeight - 1);
 
-        sf::Color color;
-        switch ((*gameMapPtr)(mapX, mapY)) {
-            case 1: {
-                color = sf::Color::Red;
-                break;
+        if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
+            double wallX;
+            if (horizontal) {
+                wallX = playerPtr->getPosY() + perpendicularDistance * rayDirY;
+            } else {
+                wallX = playerPtr->getPosX() + perpendicularDistance * rayDirX;
             }
-            case 2: {
-                color = sf::Color::Green;
-                break;
+
+            wallX -= std::floor(wallX);
+        } else {
+            sf::Color color;
+            switch ((*gameMapPtr)(mapX, mapY)) {
+                case 1: {
+                    color = sf::Color::Red;
+                    break;
+                }
+                case 2: {
+                    color = sf::Color::Green;
+                    break;
+                }
+                case 3: {
+                    color = sf::Color::Blue;
+                    break;
+                }
+                case 4: {
+                    color = sf::Color::White;
+                    break;
+                }
+                case 5: {
+                    color = sf::Color::Cyan;
+                    break;
+                }
+                default: {
+                    color = sf::Color::Yellow;
+                    break;
+                }
             }
-            case 3: {
-                color = sf::Color::Blue;
-                break;
+
+            int vertLineInd = 2 * w;
+            mLines[vertLineInd].position = sf::Vector2f(w, lineStart);
+            mLines[vertLineInd + 1].position = sf::Vector2f(w, lineEnd);
+
+            if (horizontal) {
+                color.a = color.a / 2;
             }
-            case 4: {
-                color = sf::Color::White;
-                break;
-            }
-            case 5: {
-                color = sf::Color::Cyan;
-                break;
-            }
-            default: {
-                color = sf::Color::Yellow;
-                break;
-            }
+
+            double colorModifier = std::max(1.0, (double)screenHeight / (double)lineHeight);
+            color.a /= colorModifier;
+
+            mLines[vertLineInd].color = color;
+            mLines[vertLineInd + 1].color = color;
         }
-
-        int vertLineInd = 2 * w;
-        mLines[vertLineInd].position = sf::Vector2f(w, lineStart);
-        mLines[vertLineInd + 1].position = sf::Vector2f(w, lineEnd);
-
-        if (horizontal) {
-            color.a = color.a / 2;
-        }
-
-        double colorModifier = std::max(1.0, (double)screenHeight / (double)lineHeight);
-        color.a /= colorModifier;
-
-        mLines[vertLineInd].color = color;
-        mLines[vertLineInd + 1].color = color;
     }
 }
 

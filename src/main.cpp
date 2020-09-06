@@ -3,7 +3,7 @@
 #include <vector>
 #include <cmath>
 #include "raycaster.h"
-
+#include "Assets.h"
 
 constexpr int screenWidth = 800;
 constexpr int screenHeight = 600;
@@ -12,16 +12,18 @@ constexpr int screenHeight = 600;
 int main() {
     sf::Clock clock;
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "piotoor's raycaster");
-    window.setFramerateLimit(100);
+    window.setFramerateLimit(60);
 
     sf::Font font;
     sf::Text fpsText;
     bool fpsAvailable = true;
 
+    Assets::loadTextures("../assets/textures");
     GameMap gameMap;
     Player player(12, 12, -1, 0, 0.5, &gameMap);
     Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap);
 
+    std::cout << "Loading fonts..." << std::endl;
     if (font.loadFromFile("../assets/fonts/DooM.ttf")) {
         std::cout << "DooM.ttf loaded successfully" << std::endl;
         fpsText.setFont(font);

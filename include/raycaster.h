@@ -10,11 +10,18 @@ class Raycaster : public sf::Drawable, public sf::Transformable {
     public:
         enum class RaycasterType {
             NO_TEXTURES,
-            LOADED_TESTURES,
+            LOADED_TEXTURES,
             GENERATED_TEXTURES
         };
 
-        Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameMap *gameMapPtr, Raycaster::RaycasterType raycasterType = Raycaster::RaycasterType::NO_TEXTURES);
+        Raycaster(int screenWidth,
+                  int screenHeight,
+                  Player *playerPtr,
+                  GameMap *gameMapPtr,
+                  Raycaster::RaycasterType raycasterType = Raycaster::RaycasterType::NO_TEXTURES,
+                  int textureWidth = 64,
+                  int textureHeight = 64);
+
         virtual ~Raycaster();
 
         void update();
@@ -28,6 +35,8 @@ class Raycaster : public sf::Drawable, public sf::Transformable {
         Player          *playerPtr;
         GameMap         *gameMapPtr;
         RaycasterType   raycasterType;
+        int             textureWidth;
+        int             textureHeight;
         sf::VertexArray mVertices;
         sf::VertexArray mLines;
 };
