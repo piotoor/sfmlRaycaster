@@ -16,7 +16,7 @@ class Assets
         static void loadTextures(const std::string assetsFolder);
 
     protected:
-        static std::map<std::string, std::unique_ptr<sf::Image>> textures;
+        static std::unordered_map<std::string, std::unique_ptr<sf::Image>> textures;
 
 };
 

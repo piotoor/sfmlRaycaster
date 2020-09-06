@@ -1,6 +1,6 @@
 #include "Assets.h"
 
-std::map<std::string, std::unique_ptr<sf::Image>> Assets::textures;
+std::unordered_map<std::string, std::unique_ptr<sf::Image>> Assets::textures;
 
 Assets::Assets() {
 
