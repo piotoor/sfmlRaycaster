@@ -1,11 +1,9 @@
 #include "gameMap.h"
 
-gameMap::gameMap()
-{
-    //ctor
+GameMap::GameMap() {
+
 }
 
-gameMap::~gameMap()
-{
-    //dtor
+GameMap::~GameMap() {
+
 }
