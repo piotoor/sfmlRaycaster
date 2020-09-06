@@ -9,12 +9,12 @@ class Player {
         Player(double posX, double posY, double dirX, double dirY, double playerSize, GameMap *gameMapPtr);
         virtual ~Player();
 
-        void rotateRight(double rotationSpeed);
-        void rotateLeft(double rotationSpeed);
-        void moveForward(double moveSpeed);
-        void moveBack(double moveSpeed);
-        void moveLeft(double moveSpeed);
-        void moveRight(double moveSpeed);
+        void rotateRight    (double rotationSpeed);
+        void rotateLeft     (double rotationSpeed);
+        void moveForward    (double moveSpeed);
+        void moveBack       (double moveSpeed);
+        void moveLeft       (double moveSpeed);
+        void moveRight      (double moveSpeed);
 
         double getPosX() const;
         double getPosY() const;
@@ -23,8 +23,6 @@ class Player {
         double getPlayerSize() const;
         double getPlaneX() const;
         double getPlaneY() const;
-
-    protected:
 
     private:
         double posX;
@@ -36,7 +34,6 @@ class Player {
         double playerSize;
 
         GameMap *gameMapPtr;
-
 };
 
 #endif // PLAYER_H

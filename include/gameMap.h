@@ -15,11 +15,10 @@ class GameMap {
             return gameMap_[x][y];
         }
 
-    protected:
-
     private:
         static constexpr int mapWidth = 24;
         static constexpr int mapHeight = 24;
+
         std::vector<std::vector<int>> gameMap_ = {
           {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
           {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
