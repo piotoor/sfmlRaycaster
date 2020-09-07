@@ -16,23 +16,18 @@ int main() {
 
     sf::Font font;
     sf::Text fpsText;
-    bool fpsAvailable = true;
 
     Assets::loadTextures("../assets/textures");
+    Assets::loadFonts("../assets/fonts");
     GameMap gameMap;
     Player player(12, 12, -1, 0, 0.5, &gameMap);
     Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap, Raycaster::RaycasterType::LOADED_TEXTURES);
 
-    std::cout << "Loading fonts..." << std::endl;
-    if (font.loadFromFile("../assets/fonts/DooM.ttf")) {
-        std::cout << "DooM.ttf loaded successfully" << std::endl;
-        fpsText.setFont(font);
-        fpsText.setCharacterSize(24);
-        fpsText.setFillColor(sf::Color::Green);
-    } else {
-        std::cout << "Error loading DooM.ttf" << std::endl;
-        fpsAvailable = false;
-    }
+
+    fpsText.setFont(*(Assets::getFont("doom")));
+    fpsText.setCharacterSize(24);
+    fpsText.setFillColor(sf::Color::Green);
+
 
     while (window.isOpen()) {
         window.clear(sf::Color(40, 40, 40));
@@ -47,10 +42,7 @@ int main() {
 
         sf::Time elapsed = clock.restart();
         double fps = 1000000.0 / static_cast<double>(elapsed.asMicroseconds());
-        if (fpsAvailable) {
-            fpsText.setString(std::to_string(fps));
-
-        }
+        fpsText.setString(std::to_string(fps));
 
         raycaster.update();
 
