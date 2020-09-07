@@ -12,11 +12,11 @@ class Assets
     public:
         Assets();
         virtual ~Assets();
-        static sf::Image* getTexture(std::string name);
+        static sf::Texture* getTexture(std::string name);
         static void loadTextures(const std::string assetsFolder);
 
     protected:
-        static std::unordered_map<std::string, std::unique_ptr<sf::Image>> textures;
+        static std::unordered_map<std::string, std::unique_ptr<sf::Texture>> textures;
 
 };
 
