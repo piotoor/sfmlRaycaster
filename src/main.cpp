@@ -14,20 +14,17 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "piotoor's raycaster");
     window.setFramerateLimit(60);
 
-    sf::Font font;
-    sf::Text fpsText;
-
     Assets::loadTextures("../assets/textures");
     Assets::loadFonts("../assets/fonts");
+
     GameMap gameMap;
-    Player player(12, 12, -1, 0, 0.5, &gameMap);
+    Player player(1, 1, -1, 0, 0.5, &gameMap);
     Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap, Raycaster::RaycasterType::LOADED_TEXTURES);
 
-
+    sf::Text fpsText;
     fpsText.setFont(*(Assets::getFont("doom")));
     fpsText.setCharacterSize(24);
     fpsText.setFillColor(sf::Color::Green);
-
 
     while (window.isOpen()) {
         window.clear(sf::Color(40, 40, 40));
