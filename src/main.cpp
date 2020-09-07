@@ -72,6 +72,14 @@ int main() {
             player.moveBack(moveSpeed);
         }
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+            raycaster.changeRaycasterType(Raycaster::RaycasterType::LOADED_TEXTURES);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::U)) {
+            raycaster.changeRaycasterType(Raycaster::RaycasterType::NO_TEXTURES);
+        }
+
         window.draw(raycaster);
         window.draw(fpsText);
         window.display();
