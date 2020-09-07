@@ -21,7 +21,7 @@ int main() {
     Assets::loadTextures("../assets/textures");
     GameMap gameMap;
     Player player(12, 12, -1, 0, 0.5, &gameMap);
-    Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap);
+    Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap, Raycaster::RaycasterType::LOADED_TEXTURES);
 
     std::cout << "Loading fonts..." << std::endl;
     if (font.loadFromFile("../assets/fonts/DooM.ttf")) {

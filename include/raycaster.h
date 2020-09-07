@@ -37,7 +37,7 @@ class Raycaster : public sf::Drawable, public sf::Transformable {
         RaycasterType   raycasterType;
         int             textureWidth;
         int             textureHeight;
-        sf::VertexArray mVertices;
+        sf::VertexArray mQuads;
         sf::VertexArray mLines;
 };
 

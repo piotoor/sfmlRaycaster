@@ -1,6 +1,7 @@
 #include "raycaster.h"
 #include <cmath>
 #include <iostream>
+#include "Assets.h"
 
 Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameMap *gameMapPtr,  Raycaster::RaycasterType raycasterType, int textureWidth, int textureHeight):
     screenWidth(screenWidth),
@@ -10,21 +11,9 @@ Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameM
     raycasterType(raycasterType),
     textureWidth(textureWidth),
     textureHeight(textureHeight),
-    mVertices(sf::Points, screenWidth * screenHeight),
+    mQuads(sf::Quads, screenWidth * 4),
     mLines(sf::Lines, screenWidth * 2) {
 
-    if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
-        for (int j = 0; j < screenWidth; ++j) {
-            for (int i = 0; i < screenHeight; ++i) {
-                mVertices[j * screenHeight + i].position.x = j;
-                mVertices[j * screenHeight + i].position.y = i;
-                mVertices[j * screenHeight + i].color = sf::Color::Black;
-            }
-        }
-
-
-
-    }
 }
 
 Raycaster::~Raycaster() {
@@ -34,11 +23,12 @@ Raycaster::~Raycaster() {
 
  void Raycaster::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     states.transform *= getTransform();
-    states.texture = NULL;
 
     if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
-        target.draw(mVertices, states);
+        states.texture = Assets::getTexture("walls");
+        target.draw(mQuads, states);
     } else {
+        states.texture = NULL;
         target.draw(mLines, states);
     }
 }
@@ -102,8 +92,13 @@ void Raycaster::update() {
         }
 
         int lineHeight = screenHeight / perpendicularDistance;
-        int lineStart = std::max(0, screenHeight / 2 - lineHeight / 2);
-        int lineEnd = std::min(screenHeight / 2 + lineHeight / 2, screenHeight - 1);
+        int lineStart = screenHeight / 2 - lineHeight / 2;
+        int lineEnd = screenHeight / 2 + lineHeight / 2;
+        if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::NO_TEXTURES) {
+            lineStart = std::max(0, lineStart);
+            lineEnd = std::min(lineEnd, screenHeight - 1);
+        }
+
 
         if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
             double wallX;
@@ -114,6 +109,33 @@ void Raycaster::update() {
             }
 
             wallX -= std::floor(wallX);
+
+            int texX = int(wallX * textureWidth);
+            if (horizontal && rayDirX > 0) {
+                texX = textureWidth - texX - 1;
+            }
+            if (!horizontal && rayDirY < 0) {
+                texX = textureWidth - texX - 1;
+            }
+
+            int textureInd = (*gameMapPtr)(mapX, mapY) - 1;
+            texX += textureInd * textureWidth;
+
+            int quadInd = 4 * w;
+            mQuads[quadInd].position =      sf::Vector2f(w, lineStart);
+            mQuads[quadInd + 1].position =  sf::Vector2f(w + 1, lineStart);
+            mQuads[quadInd + 2].position =  sf::Vector2f(w + 1, lineEnd);
+            mQuads[quadInd + 3].position =  sf::Vector2f(w, lineEnd);
+
+            int offscreen = 0;
+//            if (lineHeight > screenHeight) {
+//                offscreen = ((double)textureHeight / screenHeight) * (lineHeight - screenHeight) / 2;
+//            }
+
+            mQuads[quadInd].texCoords =     sf::Vector2f(texX, offscreen);
+            mQuads[quadInd + 1].texCoords = sf::Vector2f(texX + 1, offscreen);
+            mQuads[quadInd + 2].texCoords = sf::Vector2f(texX + 1, textureHeight - offscreen);
+            mQuads[quadInd + 3].texCoords = sf::Vector2f(texX, textureHeight - offscreen);
         } else {
             sf::Color color;
             switch ((*gameMapPtr)(mapX, mapY)) {
