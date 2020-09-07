@@ -8,7 +8,7 @@
 constexpr int screenWidth = 800;
 constexpr int screenHeight = 600;
 
-
+uint8_t bgColor = 0;
 int main() {
     sf::Clock clock;
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "piotoor's raycaster");
@@ -27,8 +27,8 @@ int main() {
     fpsText.setFillColor(sf::Color::Green);
 
     while (window.isOpen()) {
-        window.clear(sf::Color(40, 40, 40));
-        window.clear();
+        window.clear(sf::Color(bgColor, bgColor, bgColor));
+        //window.clear();
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -67,6 +67,22 @@ int main() {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::U)) {
             raycaster.changeRaycasterType(Raycaster::RaycasterType::NO_TEXTURES);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+            bgColor = 0;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+            bgColor = 16;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+            bgColor = 32;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+            bgColor = 48;
         }
 
         window.draw(raycaster);
