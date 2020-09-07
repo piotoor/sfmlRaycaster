@@ -162,6 +162,14 @@ void Raycaster::update() {
                     color = sf::Color::Cyan;
                     break;
                 }
+                case 6: {
+                    color = sf::Color::Magenta;
+                    break;
+                }
+                case 7: {
+                    color = sf::Color(10, 112, 201);
+                    break;
+                }
                 default: {
                     color = sf::Color::Yellow;
                     break;
