@@ -12,8 +12,16 @@ Raycaster::Raycaster(int screenWidth, int screenHeight, Player *playerPtr, GameM
     textureWidth(textureWidth),
     textureHeight(textureHeight),
     mQuads(sf::Quads, screenWidth * 4),
-    mLines(sf::Lines, screenWidth * 2) {
+    mLines(sf::Lines, screenWidth * 2),
+    mFloorQuad(sf::Quads, 4) {
 
+    mFloorQuad[0].position = sf::Vector2f(0, screenHeight / 2);
+    mFloorQuad[1].position = sf::Vector2f(screenWidth - 1, screenHeight / 2);
+    mFloorQuad[2].position = sf::Vector2f(screenWidth - 1, screenHeight - 1);
+    mFloorQuad[3].position = sf::Vector2f(0, screenHeight - 1);
+    for (int i = 0; i < 4; ++i) {
+        mFloorQuad[i].color = sf::Color(64, 64, 64);
+    }
 }
 
 Raycaster::~Raycaster() {
@@ -25,6 +33,7 @@ Raycaster::~Raycaster() {
     states.transform *= getTransform();
 
     if (raycasterType == RaycasterType::GENERATED_TEXTURES or raycasterType == RaycasterType::LOADED_TEXTURES) {
+        target.draw(mFloorQuad, states);
         states.texture = Assets::getTexture("walls");
         target.draw(mQuads, states);
     } else {
@@ -34,6 +43,7 @@ Raycaster::~Raycaster() {
 }
 
 void Raycaster::update() {
+    // walls
     for (int w = 0; w < screenWidth; ++w) {
         double cameraX = 2 * w / static_cast<double>(screenWidth) - 1;
         double rayDirX = playerPtr->getDirX() + playerPtr->getPlaneX() * cameraX;
@@ -132,12 +142,6 @@ void Raycaster::update() {
             mQuads[quadInd + 1].texCoords = sf::Vector2f(texX + 1, offscreen);
             mQuads[quadInd + 2].texCoords = sf::Vector2f(texX + 1, textureHeight - offscreen);
             mQuads[quadInd + 3].texCoords = sf::Vector2f(texX, textureHeight - offscreen);
-
-            double colorModifier = std::max(1.0, (double)screenHeight / (double)lineHeight / 2);
-
-            for (int i = quadInd; i < quadInd + 4; ++i) {
-                mQuads[i].color.a = 255 / colorModifier;
-            }
 
         } else {
             sf::Color color;
