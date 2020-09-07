@@ -128,14 +128,17 @@ void Raycaster::update() {
             mQuads[quadInd + 3].position =  sf::Vector2f(w, lineEnd);
 
             int offscreen = 0;
-//            if (lineHeight > screenHeight) {
-//                offscreen = ((double)textureHeight / screenHeight) * (lineHeight - screenHeight) / 2;
-//            }
-
             mQuads[quadInd].texCoords =     sf::Vector2f(texX, offscreen);
             mQuads[quadInd + 1].texCoords = sf::Vector2f(texX + 1, offscreen);
             mQuads[quadInd + 2].texCoords = sf::Vector2f(texX + 1, textureHeight - offscreen);
             mQuads[quadInd + 3].texCoords = sf::Vector2f(texX, textureHeight - offscreen);
+
+            double colorModifier = std::max(1.0, (double)screenHeight / (double)lineHeight / 2);
+
+            for (int i = quadInd; i < quadInd + 4; ++i) {
+                mQuads[i].color.a = 255 / colorModifier;
+            }
+
         } else {
             sf::Color color;
             switch ((*gameMapPtr)(mapX, mapY)) {
