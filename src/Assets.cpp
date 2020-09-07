@@ -45,7 +45,7 @@ void Assets::loadFonts(std::string assetsFolder)
     std::cout << "Loading fonts..." << std::endl;
     fonts["doom"] = std::make_unique<sf::Font>();
     bool successfull = true;
-    if (fonts["doom"]->loadFromFile(assetsFolder + "DooM.ttf")) {
+    if (!fonts["doom"]->loadFromFile(assetsFolder + "DooM.ttf")) {
         std::cout << "Error loading font file" << std::endl;
         successfull = false;
     }
