@@ -18,7 +18,7 @@ int main() {
     Assets::loadFonts("../assets/fonts");
 
     GameMap gameMap;
-    Player player(1, 1, -1, 0, 0.5, &gameMap);
+    Player player(22, 22, -1, 0, 0.5, &gameMap);
     Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap, Raycaster::RaycasterType::LOADED_TEXTURES);
 
     sf::Text fpsText;
