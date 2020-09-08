@@ -121,14 +121,26 @@ void Raycaster::update() {
             wallX -= std::floor(wallX);
 
             int texX = int(wallX * textureWidth);
-            if (horizontal && rayDirX > 0) {
+            if (horizontal and rayDirX > 0) {
                 texX = textureWidth - texX - 1;
             }
-            if (!horizontal && rayDirY < 0) {
+            if (!horizontal and rayDirY < 0) {
                 texX = textureWidth - texX - 1;
             }
 
-            int textureInd = (*gameMapPtr)(mapX, mapY) - 1;
+            int textureInd = (*gameMapPtr)(mapX, mapY);
+
+            if (horizontal and rayDirX > 0) {
+                textureInd >>= 12;
+            } else if (horizontal and rayDirX <= 0) {
+                textureInd = (textureInd & 0x00F0) >> 4;
+            } else if (!horizontal and rayDirY > 0) {
+                textureInd = textureInd & 0x000f;
+            } else {
+                textureInd = (textureInd & 0x0F00) >> 8;
+            }
+
+
             texX += textureInd * textureWidth;
 
             int quadInd = 4 * w;
