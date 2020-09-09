@@ -8,7 +8,7 @@
 constexpr int screenWidth = 800;
 constexpr int screenHeight = 600;
 
-uint8_t bgColor = 0;
+uint8_t bgColor = 16;
 int main() {
     sf::Clock clock;
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "piotoor's raycaster");
