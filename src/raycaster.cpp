@@ -157,7 +157,7 @@ void Raycaster::update() {
 
         } else {
             sf::Color color;
-            switch ((*gameMapPtr)(mapX, mapY)) {
+            switch ((*gameMapPtr)(mapX, mapY) % 8) {
                 case 1: {
                     color = sf::Color::Red;
                     break;

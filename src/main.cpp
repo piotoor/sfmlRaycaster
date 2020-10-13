@@ -18,7 +18,7 @@ int main() {
     Assets::loadFonts("../assets/fonts");
 
     GameMap gameMap;
-    Player player(22, 22, -1, 0, 0.5, &gameMap);
+    Player player(22, 22, -1, 0, 5.0, 3.0, 0.5, &gameMap);
     Raycaster raycaster(screenWidth, screenHeight, &player, &gameMap, Raycaster::RaycasterType::LOADED_TEXTURES);
 
     sf::Text fpsText;
@@ -42,24 +42,7 @@ int main() {
         fpsText.setString(std::to_string(fps));
 
         raycaster.update();
-
-        double moveSpeed = elapsed.asMilliseconds() / 1000.0 * 5.0;
-        double rotateSpeed = elapsed.asMilliseconds() / 1000.0 * 3.0;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-            player.rotateLeft(rotateSpeed);
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
-            player.rotateRight(rotateSpeed);
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-            player.moveForward(moveSpeed);
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-            player.moveBack(moveSpeed);
-        }
+        player.keyboardInput(elapsed.asMilliseconds());
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
             raycaster.changeRaycasterType(Raycaster::RaycasterType::LOADED_TEXTURES);

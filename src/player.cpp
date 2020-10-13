@@ -1,40 +1,47 @@
 #include "player.h"
 #include <cmath>
+#include <SFML/Graphics.hpp>
 
-Player::Player(double posX, double posY, double dirX, double dirY, double playerSize, GameMap *gameMapPtr):
+
+MovableObject::MovableObject(double posX, double posY, double dirX, double dirY, double movementSpeedMultiplier, double rotationSpeedMultiplier, double objectBoxSize, GameMap *gameMapPtr):
     posX(posX),
     posY(posY),
     dirX(dirX),
     dirY(dirY),
-    planeX(0),
-    planeY(0.66),
-    playerSize(playerSize),
+    planeX(0), // compute properly
+    planeY(0.66), // compute
+    movementSpeedMultiplier(movementSpeedMultiplier),
+    rotationSpeedMultiplier(rotationSpeedMultiplier),
+    objectBoxSize(objectBoxSize),
     gameMapPtr(gameMapPtr) {
-}
-
-Player::~Player() {
 
 }
 
-void Player::rotateRight(double rotationSpeed) {
+MovableObject::~MovableObject() {
+}
+
+void MovableObject::rotateRight(int32_t dt) {
+    double rotateSpeed = dt / 1000.0 * rotationSpeedMultiplier;
     double oldDirX = dirX;
-    dirX = dirX * cos(-rotationSpeed) - dirY * sin(-rotationSpeed);
-    dirY = oldDirX * sin(-rotationSpeed) + dirY * cos(-rotationSpeed);
+    dirX = dirX * cos(-rotateSpeed) - dirY * sin(-rotateSpeed);
+    dirY = oldDirX * sin(-rotateSpeed) + dirY * cos(-rotateSpeed);
     double oldPlaneX = planeX;
-    planeX = planeX * cos(-rotationSpeed) - planeY * sin(-rotationSpeed);
-    planeY = oldPlaneX * sin(-rotationSpeed) + planeY * cos(-rotationSpeed);
+    planeX = planeX * cos(-rotateSpeed) - planeY * sin(-rotateSpeed);
+    planeY = oldPlaneX * sin(-rotateSpeed) + planeY * cos(-rotateSpeed);
 }
 
-void Player::rotateLeft(double rotationSpeed) {
+void MovableObject::rotateLeft(int32_t dt) {
+    double rotateSpeed = dt / 1000.0 * rotationSpeedMultiplier;
     double oldDirX = dirX;
-    dirX = dirX * cos(rotationSpeed) - dirY * sin(rotationSpeed);
-    dirY = oldDirX * sin(rotationSpeed) + dirY * cos(rotationSpeed);
+    dirX = dirX * cos(rotateSpeed) - dirY * sin(rotateSpeed);
+    dirY = oldDirX * sin(rotateSpeed) + dirY * cos(rotateSpeed);
     double oldPlaneX = planeX;
-    planeX = planeX * cos(rotationSpeed) - planeY * sin(rotationSpeed);
-    planeY = oldPlaneX * sin(rotationSpeed) + planeY * cos(rotationSpeed);
+    planeX = planeX * cos(rotateSpeed) - planeY * sin(rotateSpeed);
+    planeY = oldPlaneX * sin(rotateSpeed) + planeY * cos(rotateSpeed);
 }
 
-void Player::moveForward(double moveSpeed) {
+void MovableObject::moveForward(int32_t dt) {
+    double moveSpeed = dt / 1000.0 * movementSpeedMultiplier;
     int posXi = static_cast<int>(posX + dirX * moveSpeed);
     int posYi = static_cast<int>(posY);
     if ((*gameMapPtr)(posXi, posYi) == 0) {
@@ -47,7 +54,8 @@ void Player::moveForward(double moveSpeed) {
     }
 }
 
-void Player::moveBack(double moveSpeed) {
+void MovableObject::moveBack(int32_t dt) {
+    double moveSpeed = dt / 1000.0 * movementSpeedMultiplier;
     int posXi = static_cast<int>(posX - dirX * moveSpeed);
     int posYi = static_cast<int>(posY);
     if ((*gameMapPtr)(posXi, posYi) == 0) {
@@ -60,38 +68,59 @@ void Player::moveBack(double moveSpeed) {
     }
 }
 
-void Player::moveLeft(double moveSpeed) {
 
-}
-
-void Player::moveRight(double moveSpeed) {
-
-}
-
-double Player::getPosX() const {
+double MovableObject::getPosX() const {
     return posX;
 }
 
-double Player::getPosY() const {
+double MovableObject::getPosY() const {
     return posY;
 }
 
-double Player::getDirX() const {
+double MovableObject::getDirX() const {
     return dirX;
 }
 
-double Player::getDirY() const {
+double MovableObject::getDirY() const {
     return dirY;
 }
 
-double Player::getPlayerSize() const {
-    return playerSize;
+double MovableObject::getObjectBoxSize() const {
+    return objectBoxSize;
 }
 
-double Player::getPlaneX() const {
+double MovableObject::getPlaneX() const {
     return planeX;
 }
 
-double Player::getPlaneY() const {
+double MovableObject::getPlaneY() const {
     return planeY;
+}
+
+
+
+Player::Player(double posX, double posY, double dirX, double dirY, double movementSpeedMultiplier, double rotationSpeedMultiplier, double objectBoxSize, GameMap *gameMapPtr):
+    MovableObject(posX, posY, dirX, dirY, movementSpeedMultiplier, rotationSpeedMultiplier, objectBoxSize, gameMapPtr){
+}
+
+Player::~Player() {
+
+}
+
+void Player::keyboardInput(uint32_t dt) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+        rotateLeft(dt);
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+        rotateRight(dt);
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+        moveForward(dt);
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+        moveBack(dt);
+    }
 }
