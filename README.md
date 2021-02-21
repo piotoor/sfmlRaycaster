@@ -2,6 +2,8 @@
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
+* [Features](#features)
+* [Status](#status)
 
 ## General info
 This project is a simple raycaster engine written in C++ using SFML library.
@@ -42,3 +44,9 @@ Now you can run the engine:
 ```
 ./sfmlRaycaster
 ```
+
+## Features
+You can walk around the map using arrow keys.
+
+## Status
+Project is in progress. Implementing enemies.
