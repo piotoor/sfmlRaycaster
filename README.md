@@ -8,6 +8,8 @@
 ## General info
 This project is a simple raycaster engine written in C++ using SFML library.
 
+![game](screenshots/screen1.png)
+
 ### Assets
 Currently I'm using slightly modified Wolfenstein 3D textures.
 
