@@ -1,28 +1,19 @@
-project("sfmlRaycaster")
-cmake_minimum_required(VERSION 3.16)
+set(BINARY ${CMAKE_PROJECT_NAME})
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
+set(SOURCES ${SOURCES})
+add_executable(${BINARY}_run ${SOURCES})
 
-if ( CMAKE_COMPILER_IS_GNUCC )
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
+if(WIN32 OR WIN64)
+  find_library(SFML_GRAPHICS_LIB sfml-graphics HINTS "../lib/SFML")
+  find_library(SFML_WINDOW_LIB sfml-window HINTS "../lib/SFML")
+  find_library(SFML_SYSTEM_LIB sfml-system HINTS "../lib/SFML")
+  target_link_libraries(${BINARY}_run sfml-window sfml-system sfml-graphics)
+else()
+  target_link_libraries(${BINARY}_run sfml-window sfml-system sfml-graphics pthread X11)
 endif()
-if ( MSVC )
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
-endif()
 
-include_directories(../include)
-
-add_executable(sfmlRaycaster main.cpp
-                             raycaster.cpp
-                             player.cpp
-                             gameMap.cpp
-                             Assets.cpp)
-find_library(SFML_GRAPHICS_LIB sfml-graphics)
-find_library(SFML_WINDOW_LIB sfml-window)
-find_library(SFML_SYSTEM_LIB sfml-system)
-
-target_link_libraries(sfmlRaycaster PRIVATE "${SFML_GRAPHICS_LIB}")
-target_link_libraries(sfmlRaycaster PRIVATE "${SFML_WINDOW_LIB}")
-target_link_libraries(sfmlRaycaster PRIVATE "${SFML_SYSTEM_LIB}")
+#target_link_libraries(${BINARY}_run PRIVATE "${SFML_GRAPHICS_LIB}")
+#target_link_libraries(${BINARY}_run PRIVATE "${SFML_WINDOW_LIB}")
+#target_link_libraries(${BINARY}_run PRIVATE "${SFML_SYSTEM_LIB}")
