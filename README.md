@@ -44,6 +44,7 @@ make
 
 Now you can run the engine:
 ```
+cd src
 ./sfmlRaycaster_run
 ```
 
@@ -67,6 +68,7 @@ mingw32-make.exe
 
 Now you can run the engine:
 ```
+cd src
 sfmlRaycaster_run.exe
 ```
 
