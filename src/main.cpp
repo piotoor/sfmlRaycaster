@@ -1,3 +1,4 @@
+#define SFML_STATIC
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
@@ -14,8 +15,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "piotoor's raycaster");
     window.setFramerateLimit(60);
 
-    Assets::loadTextures("../assets/textures");
-    Assets::loadFonts("../assets/fonts");
+    Assets::loadTextures("../../assets/textures");
+    Assets::loadFonts("../../assets/fonts");
 
     GameMap gameMap;
     Player player(22, 22, -1, 0, 5.0, 3.0, 0.5, &gameMap);
