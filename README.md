@@ -38,13 +38,36 @@ Go to the root directory of sfmlRaycaster project and build:
 ```
 mkdir build
 cd build
-cmake ../src
+cmake .. -G "Unix Makefiles"
 make
 ```
 
 Now you can run the engine:
 ```
-./sfmlRaycaster
+./sfmlRaycaster_run
+```
+
+### Windows
+Clone the repo:
+```
+git clone https://github.com/piotoor/sfmlRaycaster.git
+```
+
+Prerequisites:
+* [cmake](https://cmake.org/download/)
+* [mingw](https://sourceforge.net/projects/mingw-w64/)
+
+Go to the root directory of sfmlRaycaster project and build:
+```
+mkdir build
+cd build
+cmake .. -G "MinGW Makefiles"
+mingw32-make.exe
+```
+
+Now you can run the engine:
+```
+sfmlRaycaster_run.exe
 ```
 
 ## Features
