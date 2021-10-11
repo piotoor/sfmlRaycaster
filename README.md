@@ -49,17 +49,27 @@ cd src
 ```
 
 ### Windows
+Prerequisites:
+
+* [git](https://git-scm.com/download/win)
+* [cmake](https://cmake.org/download/)
+* [mingw](https://sourceforge.net/projects/mingw-w64/)
+
 Clone the repo:
 ```
 git clone https://github.com/piotoor/sfmlRaycaster.git
 ```
 
-Prerequisites:
-* [cmake](https://cmake.org/download/)
-* [mingw](https://sourceforge.net/projects/mingw-w64/)
-
-Go to the root directory of sfmlRaycaster project and build:
+Update the submodules:
 ```
+cd sfmlRaycaster/lib
+git submodule update --init --recursive
+```
+
+Go to the root directory of the sfmlRaycaster project and build:
+
+```
+cd ..
 mkdir build
 cd build
 cmake .. -G "MinGW Makefiles"
@@ -76,4 +86,4 @@ sfmlRaycaster_run.exe
 You can walk around the map using arrow keys.
 
 ## Status
-Project is in progress. Implementing enemies.
+Project is being refactored.
