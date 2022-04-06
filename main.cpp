@@ -5,21 +5,30 @@
 
 using namespace std;
 
-constexpr int mapWidth = 8;
-constexpr int mapHeight = 8;
-constexpr int screenWidth = 400;
-constexpr int screenHeight = 240;
+constexpr int mapWidth = 16;
+constexpr int mapHeight = 16;
+constexpr int screenWidth = 40;
+constexpr int screenHeight = 24;
+constexpr uint16_t drawDistance = 256;
 
 vector<vector<int>> gameMap =
 {
-    {1,1,1,1,1,1,1,1,},
-    {1,0,0,0,0,0,0,1,},
-    {1,0,0,0,0,0,0,1,},
-    {1,0,0,0,0,0,0,1,},
-    {1,0,0,0,0,0,1,1,},
-    {1,0,0,0,0,0,1,0,},
-    {1,0,0,0,0,0,1,0,},
-    {1,1,1,1,1,1,1,0,},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
 vector<vector<uint16_t>> sinTable = {
@@ -126,10 +135,14 @@ vector<vector<uint16_t>> cosTable = {
 
 int main()
 {
+    constexpr uint8_t squareSize = 16;
+    constexpr uint8_t halfFov = 40;
+
+
     uint8_t theta = 40;
-    uint8_t posX = 5;
-    uint8_t posY = 5;
-    uint8_t squareSize = 16;
+    uint8_t posX = 128;
+    uint8_t posY = 128;
+
 
 //    double posX = 1;
 //    double posY = 1;
@@ -142,149 +155,130 @@ int main()
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "piotoor's raycaster");
     window.setFramerateLimit(100);
 
-
+    int maxInitDistX = 0;
     while (window.isOpen())
     {
         window.clear(sf::Color(40, 40, 40));
         window.clear();
+//        cout << "theta = " << (int)theta << endl;
         for (int w = 0; w < screenWidth; ++w) {
             uint8_t mapX = posX / squareSize;
             uint8_t mapY = posY / squareSize;
             uint8_t stepX = 0;
             uint8_t stepY = 0;
 
-            uint8_t dx = 0;
-            uint8_t dy = squareSize * (posY / squareSize + 1) - posY;
-            uint8_t initDistX = 0;
-            uint8_t initDistY = 0;
+            uint16_t dx = 0;
+            uint16_t dy = 0;
+            uint16_t initDistX = 0;
+            uint16_t initDistY = 0;
 
-            if (theta >= 64 and theta < 192) {
-                stepX = -1;
-                dx = posX - squareSize * (posX / squareSize);
-            } else {
-                stepX = 1;
-                dx = squareSize * (posX / squareSize + 1) - posX;
+            uint8_t rayTheta = theta + halfFov - 2 * w;
+            uint8_t indirRayTheta = rayTheta;
+//            cout << "w = " << w << "--------------------------" << endl;
+//            cout << "rayTheta = " << (int)rayTheta << endl;
+//            cout << "indirRayTheta = " << (int)indirRayTheta << endl;
+            if (rayTheta >= 64 and rayTheta < 128) {
+                indirRayTheta = 128 - rayTheta;
+            } else if (rayTheta >= 128 and rayTheta < 192) {
+                indirRayTheta = rayTheta - 128;
+            } else if (rayTheta >= 192 and rayTheta < 256) {
+                indirRayTheta = 256 - rayTheta;
             }
 
-            if (theta >= 0 and theta < 128) {
+            if (rayTheta >= 64 and rayTheta < 192) {
+                stepX = -1;
+                initDistX = cosTable[posX - squareSize * (posX / squareSize)][indirRayTheta];
+            } else {
+                stepX = 1;
+                initDistX = cosTable[squareSize * (posX / squareSize + 1) - posX][indirRayTheta];
+            }
+
+            if (rayTheta >= 0 and rayTheta < 128) {
                 stepY = 1;
+                initDistY = sinTable[posY - squareSize * (posY / squareSize) - 1][indirRayTheta];
 
             } else {
                 stepY = -1;
+                initDistY = sinTable[squareSize * (posY / squareSize + 1) - posY - 1][indirRayTheta];
             }
 
+            dx = cosTable[squareSize - 1][indirRayTheta];
+            dy = sinTable[squareSize - 1][indirRayTheta];
+
+            bool hit = false;
+            bool horizontal = false;
+
+            while (not hit) {
+                if (initDistX <= initDistY) {
+                    horizontal = true;
+                    initDistX += dx;
+                    mapX += stepX;
+                } else {
+                    horizontal = false;
+                    initDistY += dy;
+                    mapY += stepY;
+                }
+                if (gameMap[mapX][mapY] > 0) {
+                    hit = true;
+                }
+            }
+
+//            cout << "initDistX = " << initDistX << endl;
+//            cout << "initDistY = " << initDistY << endl;
+//            cout << "dx = " << dx << endl;
+//            cout << "dy = " << dy << endl;
+            // hack
+            initDistX = fmax((uint16_t)1, initDistX);
+
+            initDistY = fmax((uint16_t)1, initDistY);
+            //
+
+            uint16_t maxInitDist = (int)max(initDistX, initDistY);
+            maxInitDistX = fmax(maxInitDist, maxInitDistX);
+            uint16_t alpha = abs(theta - rayTheta);
+            uint8_t indirAlpha = alpha;
+
+            if (alpha >= 64 and alpha < 128) {
+                indirAlpha = 128 - alpha;
+            } else if (alpha >= 128 and alpha < 192) {
+                indirAlpha = alpha - 128;
+            } else if (alpha >= 192 and alpha < 256) {
+                indirAlpha = 256 - alpha;
+            }
+
+            uint16_t perpDist = maxInitDist * cos(indirAlpha * M_PI / 128);
+            cout << "-----------------" << endl;
+            cout << "perpDist = " << perpDist << endl;
+            cout << "maxInitDist = " << maxInitDist << endl;
+            cout << "ratio = " << perpDist * 1.0 / maxInitDist << endl;
+            int k = 0xFFFF / screenHeight; // 1638
+            int lineHeight = screenHeight - 12 * perpDist / k;
+//            cout << "lineHeight = " << lineHeight << endl;
+            int lineStart = max(0, screenHeight / 2 - lineHeight / 2);
+            int lineEnd = min(screenHeight / 2 + lineHeight / 2, screenHeight - 1);
 
 
+            sf::VertexArray line(sf::Lines, 2);
+            sf::Color color = sf::Color::Red;
+            line[0].position = sf::Vector2f(w, lineStart);
+            line[1].position = sf::Vector2f(w, lineEnd);
+//            cout << "w = " << w << "--------------------------" << endl;
+//            cout << "line[0] = " << line[0].position.x << ", " << line[0].position.y << endl;
+//            cout << "line[1] = " << line[1].position.x << ", " << line[1].position.y << endl;
 
+            if (horizontal) {
+                color.a = color.a / 2;
+            }
 
-//            double cameraX = 2 * w / static_cast<double>(screenWidth) - 1;
-//            double rayDirX = dirX + planeX * cameraX;
-//            double rayDirY = dirY + planeY * cameraX;
-//            int mapX = static_cast<int>(posX);
-//            int mapY = static_cast<int>(posY);
-//
-//
-//            double dx = rayDirX == 1 ? 0 : abs(1 / rayDirX);
-//            double dy = rayDirY == 1 ? 0 : abs(1 / rayDirY);
-//
-//
-//            int stepX = 0;
-//            int stepY = 0;
-//            double initDistX = 0;
-//            double initDistY = 0;
-//
-//            if (rayDirX >= 0) {
-//                    initDistX = (1 - posX + mapX) * dx;
-//                    stepX = 1;
-//            } else {
-//                    initDistX = (posX - mapX) * dx;
-//                    stepX = -1;
-//            }
-//
-//            if (rayDirY >= 0) {
-//                    initDistY = (1 - posY + mapY) * dy;
-//                    stepY = 1;
-//            } else {
-//                    initDistY = (posY - mapY) * dy;
-//                    stepY = -1;
-//            }
-//
-//            bool hit = false;
-//            bool horizontal = true;
-//            while (!hit) {
-//                if (initDistX <= initDistY) {
-//                    horizontal = true;
-//                    initDistX += dx;
-//                    mapX += stepX;
-//                } else {
-//                    horizontal = false;
-//                    initDistY += dy;
-//                    mapY += stepY;
-//                }
-//                if (gameMap[mapX][mapY] > 0) {
-//                    hit = true;
-//                }
-//            }
-//            double perpendicularDistance = 0;
-//            if (horizontal) {
-//                double distX = mapX - posX + (1 - stepX) / 2;
-//                perpendicularDistance = rayDirX == 0 ? distX : distX / rayDirX;
-//            } else {
-//                double distY = mapY - posY + (1 - stepY) / 2;
-//                perpendicularDistance = rayDirY == 0 ? distY : distY / rayDirY;
-//            }
-//
-//            int lineHeight = screenHeight / perpendicularDistance;
-//            int lineStart = max(0, screenHeight / 2 - lineHeight / 2);
-//            int lineEnd = min(screenHeight / 2 + lineHeight / 2, screenHeight - 1);
-//
-//
-//            sf::VertexArray line(sf::Lines, 2);
-//
-//
-//
-//            sf::Color color;
-//            switch (gameMap[mapX][mapY]) {
-//                case 1: {
-//                    color = sf::Color::Red;
-//                    break;
-//                }
-//                case 2: {
-//                    color = sf::Color::Green;
-//                    break;
-//                }
-//                case 3: {
-//                    color = sf::Color::Blue;
-//                    break;
-//                }
-//                case 4: {
-//                    color = sf::Color::White;
-//                    break;
-//                }
-//                case 5: {
-//                    color = sf::Color::Cyan;
-//                    break;
-//                }
-//                default: {
-//                    color = sf::Color::Yellow;
-//                    break;
-//                }
-//            }
-//
-//            line[0].position = sf::Vector2f(w, lineStart);
-//            line[1].position = sf::Vector2f(w, lineEnd);
-//
-//            if (horizontal) {
-//                color.a = color.a / 2;
-//            }
-//
 //            double colorModifier = max(1.0, (double)screenHeight / (double)lineHeight);
 //
 //            color.a /= colorModifier;
-//
-//            line[0].color = color;
-//            line[1].color = color;
-//            window.draw(line);
+
+            line[0].color = color;
+            line[1].color = color;
+            window.draw(line);
+
+
         }
 
 
@@ -312,7 +306,7 @@ int main()
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-
+            break;
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
@@ -320,54 +314,12 @@ int main()
         }
 
 
-//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-//            double oldDirX = dirX;
-//            dirX = dirX * cos(rotateSpeed) - dirY * sin(rotateSpeed);
-//            dirY = oldDirX * sin(rotateSpeed) + dirY * cos(rotateSpeed);
-//            double oldPlaneX = planeX;
-//            planeX = planeX * cos(rotateSpeed) - planeY * sin(rotateSpeed);
-//            planeY = oldPlaneX * sin(rotateSpeed) + planeY * cos(rotateSpeed);
-//        }
-//
-//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
-//            double oldDirX = dirX;
-//            dirX = dirX * cos(-rotateSpeed) - dirY * sin(-rotateSpeed);
-//            dirY = oldDirX * sin(-rotateSpeed) + dirY * cos(-rotateSpeed);
-//            double oldPlaneX = planeX;
-//            planeX = planeX * cos(-rotateSpeed) - planeY * sin(-rotateSpeed);
-//            planeY = oldPlaneX * sin(-rotateSpeed) + planeY * cos(-rotateSpeed);
-//        }
-//
-//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-//            int posXi = static_cast<int>(posX + dirX * moveSpeed);
-//            int posYi = static_cast<int>(posY);
-//            if (gameMap[posXi][posYi] == 0) {
-//                posX += dirX * moveSpeed;
-//            }
-//            posXi = static_cast<int>(posX);
-//            posYi = static_cast<int>(posY + dirY * moveSpeed);
-//            if (gameMap[posXi][posYi] == 0) {
-//                posY += dirY * moveSpeed;
-//            }
-//        }
-//
-//        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-//            int posXi = static_cast<int>(posX - dirX * moveSpeed);
-//            int posYi = static_cast<int>(posY);
-//            if (gameMap[posXi][posYi] == 0) {
-//                posX -= dirX * moveSpeed;
-//            }
-//            posXi = static_cast<int>(posX);
-//            posYi = static_cast<int>(posY - dirY * moveSpeed);
-//            if (gameMap[posXi][posYi] == 0) {
-//                posY -= dirY * moveSpeed;
-//            }
-//        }
-
-
-
-
     }
+
+    cout << "maxinitDistX = " << maxInitDistX << endl;
+
+    int k;
+    cin >> k;
 
     return 0;
 }
